@@ -1,0 +1,45 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+.swap-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.swap-bar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.swap-bar-display {
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-bottom: 5%;
+}
+h1 {
+  font-family: "Protest Guerrilla", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.wiggle-on-hover {
+  transition: transform 0.1s ease-in-out;
+}
+
+.wiggle-on-hover:hover {
+  animation: wiggle 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes wiggle {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(5deg);
+  }
+}
