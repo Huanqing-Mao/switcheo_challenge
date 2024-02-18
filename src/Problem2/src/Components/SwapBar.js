@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Select, Divider } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Select,
+  Divider,
+  Modal,
+  Space,
+  Tooltip,
+  Typography,
+} from "antd";
+import { SwapOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import data from "../data.json";
 import SwapScreen from "./SwapScreen";
 import { getExchangedValue } from "./ExchangeAPI";
-const { Option } = Select;
+const { confirm } = Modal;
 
 export default function SwapBar() {
   const [inputAmount, setInputAmount] = useState(1);
@@ -11,9 +22,6 @@ export default function SwapBar() {
 
   const [exchangeCurrency, setExchangeCurrency] = useState("bNEO");
   const [exchangeAmount, setExchangeAmount] = useState(0);
-  const [isInputAmountUserInput, setIsInputAmountUserInput] = useState(true);
-  const [isExchangeAmountUserInput, setIsExchangeAmountUserInput] =
-    useState(true);
 
   const handleInputAmountChange = (value) => {
     if (value === "" || isNaN(value)) {
@@ -21,7 +29,6 @@ export default function SwapBar() {
     } else {
       setInputAmount(parseFloat(value)); // Parse the input value as a float
     }
-    setIsInputAmountUserInput(true);
   };
 
   const handleExchangeAmountChange = (value) => {
@@ -30,7 +37,6 @@ export default function SwapBar() {
     } else {
       setExchangeAmount(parseFloat(value)); // Parse the input value as a float
     }
-    setIsExchangeAmountUserInput(true);
   };
 
   const handleInputCurrencyChange = (value) => {
@@ -44,6 +50,33 @@ export default function SwapBar() {
     //console.log(getExchangedValue(data, inputAmount, inputCurrency, value));
   };
 
+  const onSwap = () => {
+    const temp = inputCurrency;
+    setInputCurrency(exchangeCurrency);
+    setExchangeCurrency(temp);
+  };
+
+  const filterOption = (input, option) =>
+    (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+
+  const onSearch = (value) => {
+    console.log("search:", value);
+  };
+
+  const showConfirm = () => {
+    confirm({
+      title: "Do you want to proceed?",
+      icon: <ExclamationCircleFilled />,
+      content: "Please note that the transaction is irreversible.",
+      onOk() {
+        console.log("OK");
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
   useEffect(() => {
     const value = getExchangedValue(
       data,
@@ -54,86 +87,90 @@ export default function SwapBar() {
 
     console.log(inputAmount, inputCurrency, exchangeCurrency, value);
     setExchangeAmount(isNaN(value) ? 0 : parseFloat(value.toFixed(4)));
-    setIsInputAmountUserInput(false);
-  }, [inputAmount, inputCurrency, exchangeCurrency, isInputAmountUserInput]);
-
-  useEffect(() => {
-    if (isExchangeAmountUserInput) {
-      const value = getExchangedValue(
-        data,
-        exchangeAmount,
-        exchangeCurrency,
-        inputCurrency
-      );
-      setInputAmount(isNaN(value) ? 0 : parseFloat(value.toFixed(4)));
-      setIsExchangeAmountUserInput(false);
-    }
-  }, [
-    exchangeAmount,
-    exchangeCurrency,
-    inputCurrency,
-    isExchangeAmountUserInput,
-  ]);
+  }, [inputAmount, inputCurrency, exchangeCurrency]);
 
   return (
     <div class="swap-bar-display">
       <SwapScreen from={inputCurrency} to={exchangeCurrency} />
       <div className="swap-bar">
+        <Divider orientation="left">Pay</Divider>
         <Form name="customized_form_controls" layout="inline">
-          <Form.Item name="price" label="">
-            <Input
-              type="number"
-              value={isNaN(inputAmount) ? "" : inputAmount}
-              onChange={(e) => handleInputAmountChange(e.target.value)}
-              style={{
-                width: 100,
-              }}
-            />
-            <Select
-              style={{
-                width: 100,
-                margin: "0 8px",
-              }}
-              value={inputCurrency}
-              onChange={handleInputCurrencyChange}
-            >
-              {data.map((item) => (
-                <Option key={item.currency} value={item.currency}>
-                  {item.currency}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item></Form.Item>
+          <Space>
+            <Form.Item name="price" label="" style={{ marginLeft: "20px" }}>
+              <Input
+                type="number"
+                value={isNaN(inputAmount) ? "" : inputAmount}
+                onChange={(e) => handleInputAmountChange(e.target.value)}
+                style={{
+                  width: 100,
+                }}
+              />
+              <Select
+                style={{
+                  width: 100,
+                  margin: "0 8px",
+                }}
+                showSearch
+                value={inputCurrency}
+                filterOption={filterOption}
+                optionFilterProp="children"
+                onChange={handleInputCurrencyChange}
+                options={data.map((item) => ({
+                  key: item.currency,
+                  value: item.currency,
+                  label: item.currency,
+                }))}
+              ></Select>
+            </Form.Item>
+          </Space>
+
+          <Divider orientation="left">Receive</Divider>
+
+          <Space>
+            <Form.Item name="price" label="" style={{ marginLeft: "20px" }}>
+              <Input
+                type="number"
+                value={isNaN(exchangeAmount) ? "" : exchangeAmount}
+                onChange={(e) => handleExchangeAmountChange(e.target.value)}
+                style={{
+                  width: 100,
+                }}
+              />
+              <Select
+                style={{
+                  width: 100,
+                  margin: "0 8px",
+                }}
+                showSearch
+                value={exchangeCurrency}
+                onSearch={onSearch}
+                filterOption={filterOption}
+                optionFilterProp="children"
+                onChange={handleExchangeCurrencyChange}
+                options={data.map((item) => ({
+                  key: item.currency,
+                  value: item.currency,
+                  label: item.currency,
+                }))}
+              ></Select>
+            </Form.Item>
+          </Space>
+          <Button type="primary" shape="circle" onClick={onSwap}>
+            <SwapOutlined rotate={90} />
+          </Button>
         </Form>
-        <Divider />
-        <Form name="customized_form_controls2" layout="inline">
-          <Form.Item name="price" label="">
-            <Input
-              type="number"
-              value={isNaN(exchangeAmount) ? "" : exchangeAmount}
-              onChange={(e) => handleExchangeAmountChange(e.target.value)}
-              style={{
-                width: 100,
-              }}
-            />
-            <Select
-              style={{
-                width: 100,
-                margin: "0 8px",
-              }}
-              value={exchangeCurrency}
-              onChange={handleExchangeCurrencyChange}
-            >
-              {data.map((item) => (
-                <Option key={item.currency} value={item.currency}>
-                  {item.currency}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item></Form.Item>
-        </Form>
+        <br />
+        <Tooltip title="Useful information">
+          <Typography.Link href="#API">Need Help?</Typography.Link>
+        </Tooltip>
+
+        <Button
+          type="primary"
+          style={{ marginTop: "10px", marginBottom: "-20px" }}
+          onClick={showConfirm}
+        >
+          Confirm Payment
+        </Button>
       </div>
     </div>
   );

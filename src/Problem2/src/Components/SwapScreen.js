@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Divider } from "antd";
+import { Tooltip, Typography } from "antd";
 import data from "../data.json";
 import { getExchangedValue } from "./ExchangeAPI";
 
@@ -36,11 +36,16 @@ export default function SwapScreen(props) {
   return (
     <div>
       <h3>1 {from} equals</h3>
-      <h2 style={{ fontSize: 48 }}>
+      <h2 style={{ fontSize: 38 }}>
         {amount} {to}
       </h2>
-      <p>{currentDate}</p>
-      <Divider orientation="left">Calculator</Divider>
+
+      <div style={{ display: "inline" }}>
+        <p>
+          {currentDate} ·{" "}
+          <Typography.Link href="#Ref">Disclaimer</Typography.Link>
+        </p>
+      </div>
     </div>
   );
 }
