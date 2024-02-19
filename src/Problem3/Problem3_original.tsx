@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useMemo } from "react";
 // It is unknown of what libraries are used. Here I assume that all the functions are pre-defined or passed in as props.
 
 interface WalletBalance {
