@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useMemo } from "react";
 // It is unknown of what libraries are used. Here I assume that all the functions are pre-defined or passed in as props.
 
 interface WalletBalance {
@@ -10,7 +9,7 @@ interface WalletBalance {
 }
 
 // The use of FormattedWalletBalance is redundant,
-// because you can just pass the formatted string to the WalletBalance when you create the WalletBalance object
+// because you can just include the formatted string to the WalletBalance when you create the WalletBalance object
 // however, since the balances are created in useWalletBalances, I cannot modify the process.
 interface FormattedWalletBalance {
   currency: string;
