@@ -8,7 +8,7 @@ interface WalletBalance {
   // include blockchain field
 }
 
-// The use of FormattedWalletBalance is redundant, because you can just pass the formatted string to the WalletBalance when you create the WalletBalance object
+// The use of FormattedWalletBalance is redundant, because you can just include the formatted string to the WalletBalance when you create the WalletBalance object
 interface FormattedWalletBalance {
   currency: string;
   amount: number;
